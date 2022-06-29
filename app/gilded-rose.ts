@@ -10,6 +10,13 @@ export class Item {
   }
 }
 
+enum Items {
+  Brie = 'Aged Brie',
+  Pass = 'Backstage passes to a TAFKAL80ETC concert',
+  Conjured = 'Conjured',
+  Sulfuras = 'Sulfuras, Hand of Ragnaros'
+}
+
 export class GildedRose {
   items: Array<Item>;
 
@@ -20,51 +27,61 @@ export class GildedRose {
   updateQuality() {
     for (let item of this.items) {
       switch (item.name) {
-        case 'Aged Brie': {
-          if (item.sellIn > 0) {
-            item.quality = Math.min(50, item.quality + 1);
-          } else {
-            item.quality = Math.min(50, item.quality + 2);
-          }
-          item.sellIn--;
+        case Items.Brie: {
+          this.increaseQualityBrie(item);
           break;
         }
-        case 'Backstage passes to a TAFKAL80ETC concert': {
-          if (item.sellIn <= 0) {
-            item.quality = 0;
-          } else if (item.sellIn <= 5) {
-            item.quality = Math.min(50, item.quality + 3);
-          } else if (item.sellIn <= 10) {
-            item.quality = Math.min(50, item.quality + 2);
-          } else {
-            item.quality = Math.min(50, item.quality + 1);
-          }
-          item.sellIn--;
+        case Items.Pass: {
+          this.increaseQualityPass(item);
           break;
         }
-        case 'Conjured': {
-          if (item.sellIn <= 0) {
-            item.quality = Math.max(0, item.quality - 4);
-          } else {
-            item.quality = Math.max(0, item.quality - 2);
-          }
-          item.sellIn--;
+        case Items.Conjured: {
+          this.decreaseQuality(item, true);
           break;
         }
-        case 'Sulfuras, Hand of Ragnaros': {
+        case Items.Sulfuras: {
           break;
         }
         default: {
-          if (item.sellIn <= 0) {
-            item.quality = Math.max(0, item.quality - 2);
-          } else {
-            item.quality = Math.max(0, item.quality - 1);
-          }
-          item.sellIn--;
+          this.decreaseQuality(item, false);
           break;
         }
       }
     }
     return this.items;
+  }
+
+  decreaseQuality(item: Item, doubleDegradation: boolean) {
+    let multiplicationFactor = 1;
+    if (doubleDegradation)
+      multiplicationFactor *= 2;
+    if (item.sellIn <= 0) {
+      item.quality = Math.max(0, item.quality - 2 * multiplicationFactor);
+    } else {
+      item.quality = Math.max(0, item.quality - multiplicationFactor);
+    }
+    item.sellIn--;
+  }
+
+  increaseQualityBrie(item: Item) {
+    if (item.sellIn > 0) {
+      item.quality = Math.min(50, item.quality + 1);
+    } else {
+      item.quality = Math.min(50, item.quality + 2);
+    }
+    item.sellIn--;
+  }
+
+  increaseQualityPass(item: Item) {
+    if (item.sellIn <= 0) {
+      item.quality = 0;
+    } else if (item.sellIn <= 5) {
+      item.quality = Math.min(50, item.quality + 3);
+    } else if (item.sellIn <= 10) {
+      item.quality = Math.min(50, item.quality + 2);
+    } else {
+      item.quality = Math.min(50, item.quality + 1);
+    }
+    item.sellIn--;
   }
 }
