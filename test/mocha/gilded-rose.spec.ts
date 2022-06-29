@@ -2,27 +2,27 @@ import { expect } from 'chai';
 import { Item, GildedRose } from '@/gilded-rose';
 
 describe('Gilded Rose', () => {
-  it('should foo', () => {
-    const gildedRose = new GildedRose([new Item('foo', 0, 0)]);
-    const items = gildedRose.updateQuality();
-    expect(items[0].name).to.equal('fixme');
-  });
-  it('should degrade quality by one', () => {
+  it('should degrade quality by one if sellin > 0', () => {
     const glidedRose = new GildedRose([new Item('item', 1, 5)]);
     const items = glidedRose.updateQuality();
     expect(items[0].quality).to.equal(4);
   });
-  it('should degrade quality twice as fast', () => {
+  it('should degrade quality twice as fast if sellin <= 0', () => {
     const glidedRose = new GildedRose([new Item('item', 0, 5)]);
     const items = glidedRose.updateQuality();
     expect(items[0].quality).to.equal(3);
   });
-  it('should not degrade anymore the quality', () => {
+  it('should not degrade anymore the quality if zero', () => {
     const glidedRose = new GildedRose([new Item('item', 0, 0)]);
     const items = glidedRose.updateQuality();
     expect(items[0].quality).to.equal(0);
   });
-  it('aged brie should increse in quality', () => {
+  it('aged brie should increse in quality by 1 if sellin > 0', () => {
+    const glidedRose = new GildedRose([new Item('Aged Brie', 1, 10)]);
+    const items = glidedRose.updateQuality();
+    expect(items[0].quality).to.equal(11);
+  });
+  it('aged brie should increse in quality by 2 if sellin <= 0', () => {
     const glidedRose = new GildedRose([new Item('Aged Brie', 0, 10)]);
     const items = glidedRose.updateQuality();
     expect(items[0].quality).to.equal(12);
@@ -37,6 +37,11 @@ describe('Gilded Rose', () => {
     const items = glidedRose.updateQuality();
     expect(items[0].quality).to.equal(20);
     expect(items[0].sellIn).to.equal(1);
+  });
+  it('backstage pass should increase in quality by 1 if sellIn > 10', () => {
+    const glidedRose = new GildedRose([new Item('Backstage passes to a TAFKAL80ETC concert', 11, 20)]);
+    const items = glidedRose.updateQuality();
+    expect(items[0].quality).to.equal(21);
   });
   it('backstage pass should increase in quality by 2 if sellIn <= 10', () => {
     const glidedRose = new GildedRose([new Item('Backstage passes to a TAFKAL80ETC concert', 10, 20)]);
